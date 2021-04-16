@@ -1,8 +1,8 @@
 {
   "name": "@jeiizou/http-request",
   "version": "0.0.0",
-  "description": "> TODO: description",
-  "author": "jeiizou <zhoujie01@souche.com>",
+  "description": "> a lite library for http request",
+  "author": "jeiizou <jeiizou@qq.com>",
   "homepage": "",
   "license": "ISC",
   "types": "lib/index.d.ts",
@@ -19,6 +19,7 @@
     "registry": "http://registry.npmjs.org/"
   },
   "scripts": {
-    "dev": "rollup -c"
+    "dev": "rollup -c",
+    "test": ""
   }
 }

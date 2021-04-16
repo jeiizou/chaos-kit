@@ -1,5 +1,10 @@
+/**
+ * @jeiizou/http-request 网络请求库
+ */
 export default class HttpRequest {
+    // domain
     baseUrl: string;
+    // fetch Config
     fetchConfig: {};
     constructor(config: { baseUrl: string; fetchConfig: {} }) {
         this.baseUrl = config.baseUrl;

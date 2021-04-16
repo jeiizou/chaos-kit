@@ -1,11 +1,8 @@
 # `@jeiizou/http-request`
 
-> TODO: description
+> 一个封装的网络请求库
 
-## Usage
+## Feature List
 
-```
-const httpRequest = require('@jeiizou/http-request');
-
-// TODO: DEMONSTRATE API
-```
+- 轻量级/简单
+- 默认使用fetch, 当不支持fetch的时候自动降级为ajax
