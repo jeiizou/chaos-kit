@@ -2,20 +2,40 @@ const defaultOption = {
     data: {},
 };
 
-function factoryMockFetch(option) {
+type Option = Partial<typeof defaultOption>;
+
+function factoryMockFetch(option: Option, successFlag: boolean) {
     const config = Object.assign(defaultOption, option);
-    return jest.fn(() =>
-        Promise.resolve({
-            json: () => Promise.resolve(config.data),
-        }),
-    );
+    return successFlag
+        ? jest.fn((url, requestConfig) =>
+              Promise.resolve({
+                  json: () =>
+                      Promise.resolve({
+                          data: config.data,
+                          url: url,
+                          requestConfig: requestConfig,
+                      }),
+              }),
+          )
+        : jest.fn((url, requestConfig) =>
+              Promise.reject({
+                  data: config.data,
+                  url: url,
+                  requestConfig: requestConfig,
+              }),
+          );
 }
 
 const oldFetch = window.fetch;
 
-export function injectFetchMock(options) {
+export function mockResolveFetch(options: Option) {
     // @ts-ignore
-    window.fetch = factoryMockFetch(options);
+    window.fetch = factoryMockFetch(options, true);
+}
+
+export function mockRejectFetch(options: Option) {
+    // @ts-ignore
+    window.fetch = factoryMockFetch(options, false);
 }
 
 export function resumeFetchMock() {

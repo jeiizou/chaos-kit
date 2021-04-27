@@ -2,45 +2,39 @@ type Params = {
     [keyname: string]: any;
 };
 
-export const Methods = {
-    CONNECT: 'CONNECT',
-    DELETE: 'DELETE',
-    GET: 'GET',
-    HEAD: 'HEAD',
-    OPTIONS: 'OPTIONS',
-    PATCH: 'PATCH',
-    POST: 'POST',
-    PUT: 'PUT',
-    TRACE: 'TRACE',
-};
+export enum Methods {
+    CONNECT = 'CONNECT',
+    DELETE = 'DELETE',
+    GET = 'GET',
+    HEAD = 'HEAD',
+    OPTIONS = 'OPTIONS',
+    PATCH = 'PATCH',
+    POST = 'POST',
+    PUT = 'PUT',
+    TRACE = 'TRACE',
+}
 
-export type Methods = keyof typeof Methods;
-
-type RequestOption = {
+export type RequestOption = {
     url: string;
     data?: Params;
     type?: Methods;
     method?: 'fetch' | 'ajax';
 };
 
+export type RequestConstructor = Partial<{ baseUrl: string; fetchConfig: {} }>;
+
 const defualtHeaders = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
 };
-
 export default class Request {
     // domain
     baseUrl: string;
     // fetch Config
     fetchConfig: {};
-    constructor(
-        config: { baseUrl: string; fetchConfig: {} } = {
-            baseUrl: '',
-            fetchConfig: {},
-        },
-    ) {
-        this.baseUrl = config.baseUrl;
-        this.fetchConfig = config.fetchConfig;
+    constructor(config?: RequestConstructor) {
+        this.baseUrl = config?.baseUrl ?? '';
+        this.fetchConfig = config?.fetchConfig ?? {};
     }
 
     async request(option: RequestOption) {
@@ -55,11 +49,12 @@ export default class Request {
         );
 
         type = type.toUpperCase() as Methods;
+        url = this.baseUrl + url;
 
         // create params string
         if (type === 'GET') {
             let dataStr = '';
-            Object.keys(data).forEach(key => {
+            Object.keys(data || {}).forEach(key => {
                 dataStr += key + '=' + data[key] + '&';
             });
 
@@ -95,16 +90,15 @@ export default class Request {
         } else {
             return new Promise((resolve, reject) => {
                 if (!window.XMLHttpRequest) {
-                    console.error(
+                    reject(
                         'your browser is not sopport XMLHttpRequest ! please change browser and try again',
                     );
-                    reject();
                     return;
                 }
 
                 let requestObj = new XMLHttpRequest();
                 let sendData = '';
-                if (type == 'POST') {
+                if (type === 'POST') {
                     sendData = JSON.stringify(data);
                 }
 

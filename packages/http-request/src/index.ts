@@ -1,17 +1,11 @@
 /**
  * @jeiizou/http-request 网络请求库
- * features
- *
- * - 请求实例化
- * - 快速请求方法
- * - 请求取消
- * - 请求拦截器
- * - 请求缓存
  */
-import Request, { Methods } from './request';
+import Request, { Methods, RequestConstructor } from './request';
 
-export function createRequest() {
-    let instance = new Request();
+// 创建一个实例对象
+export function createRequest(config?: RequestConstructor) {
+    let instance = new Request(config);
     let req: typeof instance.request = instance.request.bind(instance);
     return req;
 }
@@ -19,19 +13,40 @@ export function createRequest() {
 // 全局实例对象
 export const request = createRequest();
 
-for (const key in Methods) {
-    let lowKey = key.toLowerCase();
-    // @ts-ignore
-    Request.prototype[lowKey] = function (...args) {
-        if (['get', 'delete', 'head', 'options'].includes(lowKey)) {
-            return request({
-                type: key as Methods,
-                url: args[0],
-                method: 'fetch',
-                data: args[1],
-            });
-        }
-    };
+class httpRequest extends Request {
+    static instance = request;
+    static get(url: string, data?: any) {
+        return this.instance({
+            url: url,
+            type: Methods.GET,
+            method: 'fetch',
+            data: data,
+        });
+    }
+    static post(url: string, data?: any) {
+        return this.instance({
+            url: url,
+            type: Methods.POST,
+            method: 'fetch',
+            data: data,
+        });
+    }
+    static head(url: string, data?: any) {
+        return this.instance({
+            url: url,
+            type: Methods.HEAD,
+            method: 'fetch',
+            data: data,
+        });
+    }
+    static put(url: string, data?: any) {
+        return this.instance({
+            url: url,
+            type: Methods.PUT,
+            method: 'fetch',
+            data: data,
+        });
+    }
 }
 
-export default Request;
+export default httpRequest;
