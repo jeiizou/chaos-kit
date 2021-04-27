@@ -1,13 +1,13 @@
 {
-  "name": "@jeiizou/http-request",
+  "name": "@jeiizou/lru",
   "version": "0.0.0",
-  "description": "> a lite library for http request",
+  "description": "> a lite library for lru",
   "author": "jeiizou <jeiizou@qq.com>",
   "homepage": "",
   "license": "ISC",
   "types": "lib/index.d.ts",
-  "main": "lib/http-request.js",
-  "module": "lib/http-request.ems.js",
+  "main": "lib/lru.js",
+  "module": "lib/lru.ems.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -34,8 +34,5 @@
     "ts-jest": "^26.5.5",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4"
-  },
-  "dependencies": {
-    "@jeiizou/lru": "^0.0.0"
   }
 }
