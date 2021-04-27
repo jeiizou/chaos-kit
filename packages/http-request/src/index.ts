@@ -1,21 +1,28 @@
 /**
  * @jeiizou/http-request 网络请求库
+ * features
+ *
+ * - 请求实例化
+ * - 快速请求方法
+ * - 请求取消
+ * - 请求拦截器
+ * - 请求缓存
  */
 import Request, { Methods } from './request';
 
-export function create() {
+export function createRequest() {
     let instance = new Request();
-    let req = instance.request.bind(instance);
+    let req: typeof instance.request = instance.request.bind(instance);
     return req;
 }
 
-// global request
-export const request = create();
+// 全局实例对象
+export const request = createRequest();
 
 for (const key in Methods) {
     let lowKey = key.toLowerCase();
     // @ts-ignore
-    Request[lowKey] = function (...args) {
+    Request.prototype[lowKey] = function (...args) {
         if (['get', 'delete', 'head', 'options'].includes(lowKey)) {
             return request({
                 type: key as Methods,

@@ -18,9 +18,9 @@ export type Methods = keyof typeof Methods;
 
 type RequestOption = {
     url: string;
-    data: Params;
-    type: Methods;
-    method: 'fetch' | 'ajax';
+    data?: Params;
+    type?: Methods;
+    method?: 'fetch' | 'ajax';
 };
 
 const defualtHeaders = {
@@ -43,15 +43,16 @@ export default class Request {
         this.fetchConfig = config.fetchConfig;
     }
 
-    async send(
-        option: RequestOption = {
-            url: '',
-            data: {},
-            type: Methods.GET as Methods,
-            method: 'fetch',
-        },
-    ) {
-        let { type, url, data, method } = option;
+    async request(option: RequestOption) {
+        let { type, url, data, method } = Object.assign(
+            {
+                url: '',
+                data: {},
+                type: Methods.GET as Methods,
+                method: 'fetch',
+            },
+            option,
+        );
 
         type = type.toUpperCase() as Methods;
 
@@ -67,7 +68,6 @@ export default class Request {
                 url = url + '?' + dataStr;
             }
         }
-
         // @ts-ignore
         if (window.fetch && method == 'fetch') {
             let requestConfig: RequestInit = {
@@ -123,23 +123,12 @@ export default class Request {
                                 obj = JSON.parse(obj);
                             }
                             resolve(obj);
-                        } else {
-                            reject(requestObj);
                         }
                     }
+
+                    reject(requestObj);
                 };
             });
         }
-    }
-
-    request(
-        option: RequestOption = {
-            url: '',
-            data: {},
-            type: Methods.GET as Methods,
-            method: 'fetch',
-        },
-    ) {
-        return this.send(option);
     }
 }
