@@ -1,6 +1,7 @@
 import httpRequest, { createRequest, request } from '../src/index';
 import { injectXHRMock, resumeXHRMock } from './__mock__/xhr-mock';
 import { mockResolveFetch, resumeFetchMock } from './__mock__/fetch-mock';
+import { sleep } from './__util__/function';
 
 describe('xhr test', () => {
     const response = {
@@ -21,6 +22,18 @@ describe('xhr test', () => {
         let instance = createRequest();
         let resp = await instance({
             url: 'test/abc.com',
+        });
+        expect(resp).toEqual(response);
+    });
+
+    test('base request xhr', async () => {
+        let instance = createRequest();
+        let resp = await instance({
+            url: 'test/abc.com',
+            type: 'POST',
+            data: {
+                a: '123',
+            },
         });
         expect(resp).toEqual(response);
     });
@@ -71,7 +84,11 @@ describe('fetch test', () => {
     });
 
     test('method should be post', async () => {
-        let resp = await httpRequest.post('test/abc.com');
+        let data = {
+            data: '123123',
+        };
+        let resp = await httpRequest.post('test/abc.com', data);
+        expect(resp.requestConfig.body).toEqual(data);
         expect(resp.requestConfig.method).toEqual('POST');
         expect(resp.data).toEqual(response);
     });
@@ -94,5 +111,50 @@ describe('fetch test', () => {
             b: '2',
         });
         expect(resp.url).toEqual('test/abc.com?a=1&b=2');
+    });
+});
+
+describe('cache request test', () => {
+    const response = {
+        a: '1',
+        b: '2',
+    };
+    beforeAll(() => {
+        mockResolveFetch({
+            data: response,
+        });
+    });
+
+    afterAll(() => {
+        resumeFetchMock();
+    });
+
+    test('should called once', async () => {
+        let instance = new httpRequest({
+            cacheTime: 500,
+        });
+        instance.send = jest.fn();
+        await instance.request({
+            url: 'test/abc.com',
+        });
+        await instance.request({
+            url: 'test/abc.com',
+        });
+        expect(instance.send).toBeCalledTimes(1);
+    });
+
+    test('should call twice', async () => {
+        let instance = new httpRequest({
+            cacheTime: 500,
+        });
+        instance.send = jest.fn();
+        await instance.request({
+            url: 'test/abc.com',
+        });
+        await sleep(600);
+        await instance.request({
+            url: 'test/abc.com',
+        });
+        expect(instance.send).toBeCalledTimes(2);
     });
 });

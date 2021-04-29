@@ -20,7 +20,7 @@
   },
   "scripts": {
     "dev": "rollup -c",
-    "build": "rollup",
+    "build": "rollup -c",
     "test": "jest",
     "test-c": "jest --coverage"
   },

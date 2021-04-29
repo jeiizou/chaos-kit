@@ -1,9 +1,5 @@
 import LRU from '@jeiizou/lru';
 
-type Params = {
-    [keyname: string]: any;
-};
-
 export enum Methods {
     CONNECT = 'CONNECT',
     DELETE = 'DELETE',
@@ -19,8 +15,8 @@ export enum Methods {
 export type RequestOption = {
     // 请求的地址
     url: string;
-    data?: Params;
-    type?: Methods;
+    data?: any;
+    type?: string;
     method?: 'fetch' | 'ajax';
 };
 
@@ -43,13 +39,21 @@ export default class Request {
     baseUrl: string;
     fetchConfig: RequestInit;
     cacheTime: number;
-    lruCache: LRU | undefined;
+    lruCache:
+        | LRU<
+              string,
+              {
+                  data: any;
+                  time: number;
+              }
+          >
+        | undefined;
     constructor(config?: RequestConstructor) {
         this.baseUrl = config?.baseUrl ?? '';
         this.fetchConfig = config?.fetchConfig ?? {};
         this.cacheTime = config?.cacheTime ?? 0;
 
-        let cacheMaxLength = config?.cacheMaxLength;
+        let cacheMaxLength = config?.cacheMaxLength || 100;
         // 初始化 lru 内存控制对象
         if (cacheMaxLength && cacheMaxLength > 0 && this.cacheTime > 0) {
             this.lruCache = new LRU(cacheMaxLength);
@@ -61,20 +65,20 @@ export default class Request {
             {
                 url: '',
                 data: {},
-                type: Methods.GET as Methods,
+                type: Methods.GET as string,
                 method: 'fetch',
             },
             option,
         );
 
-        type = type.toUpperCase() as Methods;
+        type = type.toUpperCase();
         url = this.baseUrl + url;
 
         // create params string
-        if (type === 'GET') {
+        if (type === 'GET' && data) {
             let dataStr = '';
-            Object.keys(data || {}).forEach(key => {
-                dataStr += key + '=' + data[key] + '&';
+            Object.keys(data).forEach(key => {
+                dataStr += key + '=' + (data as any)[key] + '&';
             });
 
             if (dataStr !== '') {
@@ -93,10 +97,10 @@ export default class Request {
                 ...this.fetchConfig,
             };
 
-            if (type == 'POST') {
-                Object.defineProperty(requestConfig, 'body', {
-                    value: JSON.stringify(data),
-                });
+            if (type === 'GET' || type === 'HEAD') {
+                requestConfig.body = undefined;
+            } else if (data) {
+                requestConfig.body = data;
             }
 
             try {
@@ -153,7 +157,7 @@ export default class Request {
             let mapKey = JSON.stringify(option);
             // 存在对应的缓存内容
             let lastResult = this.lruCache.get(mapKey);
-            if (lastResult && lastResult.time - now <= this.cacheTime) {
+            if (lastResult && now - lastResult.time <= this.cacheTime) {
                 return lastResult.data;
             } else {
                 // 更新接口缓存数据

@@ -22,9 +22,11 @@ function factoryMockXHR(xhrState?: ConfigType) {
         send = sendData => {
             setTimeout(() => {
                 this.onreadystatechange();
+                this.curSendData = sendData;
             }, 0);
         };
         onreadystatechange = jest.fn();
+        curSendData: '';
     };
 }
 
