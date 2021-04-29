@@ -1,13 +1,13 @@
 {
-  "name": "@jeiizou/lru",
+  "name": "@jeiizou/tools",
   "version": "0.0.0",
-  "description": "> a lite library for lru",
+  "description": "> a base tool",
   "author": "jeiizou <jeiizou@qq.com>",
   "homepage": "",
   "license": "ISC",
-  "types": "lib/index.d.ts",
+  "types": "lib/tools.d.ts",
   "main": "lib/lru.js",
-  "module": "lib/lru.ems.js",
+  "module": "lib/tools.ems.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -34,8 +34,5 @@
     "ts-jest": "^26.5.5",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4"
-  },
-  "dependencies": {
-    "@jeiizou/tools": "^0.0.0"
   }
 }

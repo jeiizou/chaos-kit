@@ -1,4 +1,7 @@
 import LRU from '@jeiizou/lru';
+import * as defaultConfig from './default';
+import * as util from '@jeiizou/tools';
+import { buildURL } from './util/url';
 
 export enum Methods {
     CONNECT = 'CONNECT',
@@ -35,10 +38,11 @@ const defualtHeaders = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
 };
+
 export default class Request {
-    baseUrl: string;
-    fetchConfig: RequestInit;
-    cacheTime: number;
+    // baseUrl: string;
+    // fetchConfig: RequestInit;
+    // cacheTime: number;
     lruCache:
         | LRU<
               string,
@@ -48,59 +52,58 @@ export default class Request {
               }
           >
         | undefined;
-    constructor(config?: RequestConstructor) {
-        this.baseUrl = config?.baseUrl ?? '';
-        this.fetchConfig = config?.fetchConfig ?? {};
-        this.cacheTime = config?.cacheTime ?? 0;
 
-        let cacheMaxLength = config?.cacheMaxLength || 100;
+    requestContext: Required<defaultConfig.RequestConstructorParams>;
+
+    constructor(config?: defaultConfig.RequestConstructorParams) {
+        // this.baseUrl = config?.baseUrl ?? '';
+        // this.fetchConfig = config?.fetchConfig ?? {};
+        // this.cacheTime = config?.cacheTime ?? 0;
+        // let cacheMaxLength = config?.cacheMaxLength || 100;
+        // merge requestContext
+        this.requestContext = Object.assign(
+            defaultConfig.RequestConstructorParams,
+            config,
+        );
+
         // 初始化 lru 内存控制对象
-        if (cacheMaxLength && cacheMaxLength > 0 && this.cacheTime > 0) {
-            this.lruCache = new LRU(cacheMaxLength);
+        if (
+            this.requestContext.cacheTime > 0 &&
+            this.requestContext.cacheMaxLength > 0
+        ) {
+            this.lruCache = new LRU(this.requestContext.cacheMaxLength);
         }
     }
 
-    async send(option: RequestOption) {
-        let { type, url, data, method } = Object.assign(
-            {
-                url: '',
-                data: {},
-                type: Methods.GET as string,
-                method: 'fetch',
-            },
+    async send(option: Partial<defaultConfig.defaultRequestOption>) {
+        let { method, url, data, requestType, headers } = Object.assign(
+            defaultConfig.defaultRequestOption,
             option,
-        );
+        ) as defaultConfig.defaultRequestOption;
 
-        type = type.toUpperCase();
-        url = this.baseUrl + url;
+        if (!url || url === undefined) {
+            throw Error('Request: url is required');
+        }
+
+        method = method.toUpperCase();
+        url = this.requestContext.baseUrl + url;
 
         // create params string
-        if (type === 'GET' && data) {
-            let dataStr = '';
-            Object.keys(data).forEach(key => {
-                dataStr += key + '=' + (data as any)[key] + '&';
-            });
-
-            if (dataStr !== '') {
-                dataStr = dataStr.substr(0, dataStr.lastIndexOf('&'));
-                url = url + '?' + dataStr;
-            }
+        if (method === 'GET' && util.isObject(data)) {
+            url = buildURL(url, data);
         }
+
         // @ts-ignore
-        if (window.fetch && method == 'fetch') {
+        if (window.fetch && requestType == 'fetch') {
             let requestConfig: RequestInit = {
-                method: type,
-                headers: defualtHeaders,
-                mode: 'cors', // 允许跨域
-                cache: 'force-cache',
-                credentials: 'include', // 自动发送cookie
-                ...this.fetchConfig,
+                ...this.requestContext.fetchConfig,
+                method: method,
             };
 
-            if (type === 'GET' || type === 'HEAD') {
+            if (method === 'GET' || method === 'HEAD') {
                 requestConfig.body = undefined;
             } else if (data) {
-                requestConfig.body = data;
+                requestConfig.body = data as BodyInit;
             }
 
             try {
@@ -121,15 +124,19 @@ export default class Request {
 
                 let requestObj = new XMLHttpRequest();
                 let sendData = '';
-                if (type === 'POST') {
+                if (method === 'POST') {
                     sendData = JSON.stringify(data);
                 }
 
-                requestObj.open(type, url, true);
-                requestObj.setRequestHeader(
-                    'Content-type',
-                    'application/x-www-form-urlencoded',
-                );
+                requestObj.open(method, url, true);
+                for (const key in headers) {
+                    if (Object.prototype.hasOwnProperty.call(headers, key)) {
+                        requestObj.setRequestHeader(
+                            key,
+                            (headers as KVStringObject)[key],
+                        );
+                    }
+                }
                 requestObj.send(sendData);
 
                 requestObj.onreadystatechange = () => {
@@ -151,13 +158,14 @@ export default class Request {
 
     async request(option: RequestOption) {
         let response;
-        if (this.cacheTime && this.cacheTime > 0 && this.lruCache) {
+        const { cacheTime } = this.requestContext;
+        if (cacheTime && cacheTime > 0 && this.lruCache) {
             // 需要进行请求缓存逻辑
             let now = Date.now();
             let mapKey = JSON.stringify(option);
             // 存在对应的缓存内容
             let lastResult = this.lruCache.get(mapKey);
-            if (lastResult && now - lastResult.time <= this.cacheTime) {
+            if (lastResult && now - lastResult.time <= cacheTime) {
                 return lastResult.data;
             } else {
                 // 更新接口缓存数据

@@ -20,7 +20,7 @@
   },
   "scripts": {
     "dev": "rollup -c",
-    "build": "rollup",
+    "build": "rollup -c",
     "test": "jest",
     "test-c": "jest --coverage"
   },
@@ -36,6 +36,7 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "@jeiizou/lru": "^0.0.0"
+    "@jeiizou/lru": "^0.0.0",
+    "@jeiizou/tools": "^0.0.0"
   }
 }
