@@ -17,7 +17,7 @@ export const defaultRequestOption = {
     headers: defualtHeaders,
 };
 
-export type defaultRequestOption = typeof defaultRequestOption;
+export type defaultRequestOption = Partial<typeof defaultRequestOption>;
 
 /**
  * fetch 默认配置

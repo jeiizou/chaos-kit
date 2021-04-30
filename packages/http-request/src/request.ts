@@ -1,48 +1,9 @@
 import LRU from '@jeiizou/lru';
-import * as defaultConfig from './default';
+import * as Config from './default';
 import * as util from '@jeiizou/tools';
 import { buildURL } from './util/url';
 
-export enum Methods {
-    CONNECT = 'CONNECT',
-    DELETE = 'DELETE',
-    GET = 'GET',
-    HEAD = 'HEAD',
-    OPTIONS = 'OPTIONS',
-    PATCH = 'PATCH',
-    POST = 'POST',
-    PUT = 'PUT',
-    TRACE = 'TRACE',
-}
-
-export type RequestOption = {
-    // 请求的地址
-    url: string;
-    data?: any;
-    type?: string;
-    method?: 'fetch' | 'ajax';
-};
-
-export type RequestConstructor = Partial<{
-    // 基础URL
-    baseUrl: string;
-    // fetch配置信息
-    fetchConfig: RequestInit;
-    // 请求缓存间隔的时间
-    cacheTime: number;
-    // 请求缓存的最大数量
-    cacheMaxLength: number;
-}>;
-
-const defualtHeaders = {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json',
-};
-
 export default class Request {
-    // baseUrl: string;
-    // fetchConfig: RequestInit;
-    // cacheTime: number;
     lruCache:
         | LRU<
               string,
@@ -53,16 +14,12 @@ export default class Request {
           >
         | undefined;
 
-    requestContext: Required<defaultConfig.RequestConstructorParams>;
+    requestContext: Required<Config.RequestConstructorParams>;
 
-    constructor(config?: defaultConfig.RequestConstructorParams) {
-        // this.baseUrl = config?.baseUrl ?? '';
-        // this.fetchConfig = config?.fetchConfig ?? {};
-        // this.cacheTime = config?.cacheTime ?? 0;
-        // let cacheMaxLength = config?.cacheMaxLength || 100;
+    constructor(config?: Config.RequestConstructorParams) {
         // merge requestContext
         this.requestContext = Object.assign(
-            defaultConfig.RequestConstructorParams,
+            Config.RequestConstructorParams,
             config,
         );
 
@@ -75,21 +32,25 @@ export default class Request {
         }
     }
 
-    async send(option: Partial<defaultConfig.defaultRequestOption>) {
+    async send(option: Config.defaultRequestOption) {
         let { method, url, data, requestType, headers } = Object.assign(
-            defaultConfig.defaultRequestOption,
+            Config.defaultRequestOption,
             option,
-        ) as defaultConfig.defaultRequestOption;
+        ) as Config.defaultRequestOption;
 
         if (!url || url === undefined) {
             throw Error('Request: url is required');
+        }
+
+        if (!method || method === undefined) {
+            throw Error('Request: method is required');
         }
 
         method = method.toUpperCase();
         url = this.requestContext.baseUrl + url;
 
         // create params string
-        if (method === 'GET' && util.isObject(data)) {
+        if (method === 'GET' && data && util.isObject(data)) {
             url = buildURL(url, data);
         }
 
@@ -101,7 +62,7 @@ export default class Request {
             };
 
             if (method === 'GET' || method === 'HEAD') {
-                requestConfig.body = undefined;
+                delete requestConfig.body;
             } else if (data) {
                 requestConfig.body = data as BodyInit;
             }
@@ -128,7 +89,7 @@ export default class Request {
                     sendData = JSON.stringify(data);
                 }
 
-                requestObj.open(method, url, true);
+                requestObj.open(method!, url!, true);
                 for (const key in headers) {
                     if (Object.prototype.hasOwnProperty.call(headers, key)) {
                         requestObj.setRequestHeader(
@@ -156,7 +117,7 @@ export default class Request {
         }
     }
 
-    async request(option: RequestOption) {
+    async request(option: Config.defaultRequestOption) {
         let response;
         const { cacheTime } = this.requestContext;
         if (cacheTime && cacheTime > 0 && this.lruCache) {

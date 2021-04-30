@@ -1,10 +1,11 @@
 /**
  * @jeiizou/http-request 网络请求库
  */
-import Request, { Methods, RequestConstructor } from './request';
+import Request from './request';
+import * as Config from './default';
 
 // 创建一个实例对象
-export function createRequest(config?: RequestConstructor) {
+export function createRequest(config?: Config.RequestConstructorParams) {
     let instance = new Request(config);
     let req: typeof instance.request = instance.request.bind(instance);
     return req;
@@ -13,37 +14,37 @@ export function createRequest(config?: RequestConstructor) {
 // 全局实例对象
 export const request = createRequest();
 
+// function HttpRequest(params: Config.defaultRequestOption) {
+//     return request(params);
+// }
+
 class httpRequest extends Request {
     static instance = request;
     static get(url: string, data?: any) {
         return this.instance({
             url: url,
-            type: Methods.GET,
-            method: 'fetch',
+            method: 'GET',
             data: data,
         });
     }
     static post(url: string, data?: any) {
         return this.instance({
             url: url,
-            type: Methods.POST,
-            method: 'fetch',
+            method: 'POST',
             data: data,
         });
     }
     static head(url: string, data?: any) {
         return this.instance({
             url: url,
-            type: Methods.HEAD,
-            method: 'fetch',
+            method: 'HEAD',
             data: data,
         });
     }
     static put(url: string, data?: any) {
         return this.instance({
             url: url,
-            type: Methods.PUT,
-            method: 'fetch',
+            method: 'PUT',
             data: data,
         });
     }

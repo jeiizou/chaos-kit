@@ -1,4 +1,6 @@
 import httpRequest, { createRequest, request } from '../src/index';
+import { buildURL } from '../src/util/url';
+
 import { injectXHRMock, resumeXHRMock } from './__mock__/xhr-mock';
 import { mockResolveFetch, resumeFetchMock } from './__mock__/fetch-mock';
 import { sleep } from './__util__/function';
@@ -30,7 +32,7 @@ describe('xhr test', () => {
         let instance = createRequest();
         let resp = await instance({
             url: 'test/abc.com',
-            type: 'POST',
+            method: 'POST',
             data: {
                 a: '123',
             },
@@ -110,7 +112,12 @@ describe('fetch test', () => {
             a: '1',
             b: '2',
         });
-        expect(resp.url).toEqual('test/abc.com?a=1&b=2');
+        expect(resp.url).toEqual(
+            buildURL('test/abc.com', {
+                a: '1',
+                b: '2',
+            }),
+        );
     });
 });
 
