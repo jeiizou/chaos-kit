@@ -1,3 +1,29 @@
+export const ELEMENT_TAG = {
+    Map: 'Map',
+    Set: 'Set',
+    Array: 'Array',
+    Object: 'Object',
+    Boolean: 'Boolean',
+    Date: 'Date',
+    Error: 'Error',
+    Number: 'Number',
+    Reg: 'RegExp',
+    String: 'String',
+    Symbol: 'Symbol',
+    Function: 'Function',
+    ArrayBuffer: 'ArrayBuffer',
+    File: 'File',
+    Blob: 'Blob',
+};
+
+/**
+ * 判断一个变量的类型, 返回字符串
+ * @param varible 待判断的变量
+ */
+export const judge = (varible: unknown) => {
+    return Object.prototype.toString.call(varible).slice(8, -1);
+};
+
 const toString = Object.prototype.toString;
 
 /**
@@ -6,7 +32,7 @@ const toString = Object.prototype.toString;
  * @returns
  */
 export function isArray(val: any) {
-    return toString.call(val) === '[object Array]';
+    return judge(val) === ELEMENT_TAG.Array;
 }
 
 /**
@@ -40,7 +66,7 @@ export function isBuffer(val: any) {
  * @returns
  */
 export function isArrayBuffer(val: any) {
-    return toString.call(val) === '[object ArrayBuffer]';
+    return judge(val) === ELEMENT_TAG.ArrayBuffer;
 }
 
 /**
@@ -91,7 +117,7 @@ export function isFormData(val: any) {
  * @returns
  */
 export function isDate(val: any) {
-    return toString.call(val) === '[object Date]';
+    return judge(val) === ELEMENT_TAG.Date;
 }
 
 /**
@@ -109,7 +135,7 @@ export function isObject(val: any) {
  * @returns
  */
 export function isFile(val: any) {
-    return toString.call(val) === '[object File]';
+    return judge(val) === ELEMENT_TAG.File;
 }
 
 /**
@@ -118,7 +144,7 @@ export function isFile(val: any) {
  * @returns
  */
 export function isBlob(val: any) {
-    return toString.call(val) === '[object Blob]';
+    return judge(val) === ELEMENT_TAG.Blob;
 }
 
 /**
@@ -127,7 +153,7 @@ export function isBlob(val: any) {
  * @returns
  */
 export function isFunction(val: any) {
-    return toString.call(val) === '[object Function]';
+    return judge(val) === ELEMENT_TAG.Function;
 }
 
 /**
@@ -137,4 +163,12 @@ export function isFunction(val: any) {
  */
 export function isStream(val: any) {
     return isObject(val) && isFunction(val.pipe);
+}
+
+export function isMap(val: any) {
+    return judge(val) === ELEMENT_TAG.Map;
+}
+
+export function isSet(val: any) {
+    return judge(val) === ELEMENT_TAG.Set;
 }

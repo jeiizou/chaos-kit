@@ -1,4 +1,4 @@
-import httpRequest, { createRequest, request } from '../src/index';
+import httpRequest, { create, request } from '../src/index';
 import { buildURL } from '../src/util/url';
 
 import { injectXHRMock, resumeXHRMock } from './__mock__/xhr-mock';
@@ -21,7 +21,7 @@ describe('xhr test', () => {
     });
 
     test('base request xhr', async () => {
-        let instance = createRequest();
+        let instance = create();
         let resp = await instance({
             url: 'test/abc.com',
         });
@@ -29,7 +29,7 @@ describe('xhr test', () => {
     });
 
     test('base request xhr', async () => {
-        let instance = createRequest();
+        let instance = create();
         let resp = await instance({
             url: 'test/abc.com',
             method: 'POST',
@@ -72,7 +72,7 @@ describe('fetch test', () => {
     });
 
     test('return should be equal to response', async () => {
-        let instance = createRequest();
+        let instance = create();
         let resp = await instance({
             url: 'test/abc.com',
         });

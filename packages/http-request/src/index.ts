@@ -5,18 +5,22 @@ import Request from './request';
 import * as Config from './default';
 
 // 创建一个实例对象
-export function createRequest(config?: Config.RequestConstructorParams) {
+export function create(config?: Config.RequestConstructorParams) {
     let instance = new Request(config);
     let req: typeof instance.request = instance.request.bind(instance);
     return req;
 }
 
 // 全局实例对象
-export const request = createRequest();
+export const request = create();
 
 // function HttpRequest(params: Config.defaultRequestOption) {
 //     return request(params);
 // }
+
+// HttpRequest.prototype.create = create;
+
+// ['get','']
 
 class httpRequest extends Request {
     static instance = request;
