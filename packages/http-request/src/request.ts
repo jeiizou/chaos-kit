@@ -1,8 +1,7 @@
 import LRU from '@jeiizou/lru';
 import * as Default from './default';
 import * as util from '@jeiizou/tools';
-import { buildURL } from './util/url';
-import dispatchRequest from './dispatchRequest';
+import * as Url from './util/url';
 
 export default class Request {
     lruCache:
@@ -69,25 +68,26 @@ export default class Request {
     }
 
     async send(option: Partial<Default.SendOption>) {
-        let { method, url, data, headers } = Object.assign(
-            Default.defaultSendOption,
-            option,
+        let mergedOption = Object.assign(Default.defaultSendOption, option);
+
+        let fullPath = Url.buildFullPath(
+            this.requestContext.baseUrl || '',
+            mergedOption.url || '',
         );
 
-        if (!url || url === undefined) {
-            throw Error('Request: url is required');
-        }
-
-        if (!method || method === undefined) {
-            throw Error('Request: method is required');
-        }
-
-        const sendOption = Object.assign(option, this.requestContext, {
-            adapter: undefined,
-        });
+        const sendOption = {
+            ...mergedOption,
+            url: fullPath,
+            timeout:
+                mergedOption.timeout === undefined
+                    ? mergedOption.timeout
+                    : this.requestContext.timeout,
+        };
 
         try {
-            dispatchRequest(sendOption);
+            if (this.requestContext.adapter) {
+                await this.requestContext.adapter(sendOption);
+            }
         } catch (error) {
             // TODO
         }

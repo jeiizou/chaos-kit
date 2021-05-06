@@ -10,36 +10,51 @@ export const defaultHeaders: KVStringObject = {
 /**
  * request 请求的默认配置
  */
-export const defaultSendOption = {
+export const defaultSendOption: SendOption = {
     url: '',
     data: {},
     method: 'GET',
-    requestType: '',
+    responseType: '',
     headers: defaultHeaders,
 };
 
 /**
- * fetch 默认配置
+ * 请求的参数类型
  */
-export const defaultFetchOption: RequestInit = {
-    // 默认的请求方法
-    method: 'GET',
-    // 默认携带 cookie
-    credentials: 'include',
-    // 默认允许缓存
-    cache: 'force-cache',
-    // 默认的请求头
-    headers: defaultHeaders,
+export type SendOption = {
+    headers: HeaderObject;
+    method: string;
+    responseType: XMLHttpRequestResponseType;
+    requestHeaders?: HeaderObject;
+    data?: any;
+    url: string;
+    auth?: {
+        username: string;
+        password: string;
+    };
+    paramsSerializer?: Function;
+    timeout?: number;
+    timeoutErrorMessage?: string;
+    withCredentials?: boolean;
+    onDownloadProgress?: (
+        this: XMLHttpRequest,
+        ev: ProgressEvent<XMLHttpRequestEventTarget>,
+    ) => any;
+    onUploadProgress?: (
+        this: XMLHttpRequestUpload,
+        ev: ProgressEvent<XMLHttpRequestEventTarget>,
+    ) => any;
+    cancelToken?: {
+        promise: Promise<any>;
+    };
+    validateStatus?: Function;
 };
-
 /**
  * request 实例的默认配置
  */
 export const defaultRequestContext = {
     // 基础URL
     baseUrl: '',
-    // fetch配置信息
-    fetchConfig: defaultFetchOption,
     // 缓存请求的时间
     cacheTime: 0,
     // 请求缓存的最大数量
@@ -52,18 +67,6 @@ export const defaultRequestContext = {
     },
     // 默认的请求方法
     adapter: getDefaultAdapter(),
-};
-
-// -- 类型 --
-
-/**
- * 请求的参数类型
- */
-export type SendOption = typeof defaultSendOption & {
-    auth: {
-        username?: string;
-        password?: string;
-    };
 };
 
 /**

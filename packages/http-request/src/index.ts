@@ -5,53 +5,45 @@ import Request from './request';
 import * as Config from './default';
 
 // 创建一个实例对象
-export function create(config?: Config.RequestConstructorParams) {
+function create(config?: Config.RequestContext) {
     let instance = new Request(config);
     let req: typeof instance.request = instance.request.bind(instance);
     return req;
 }
 
 // 全局实例对象
-export const request = create();
+const request = create();
 
-// function HttpRequest(params: Config.defaultRequestOption) {
-//     return request(params);
-// }
-
-// HttpRequest.prototype.create = create;
-
-// ['get','']
-
-class httpRequest extends Request {
-    static instance = request;
-    static get(url: string, data?: any) {
-        return this.instance({
-            url: url,
+function HttpRequest(
+    params: Config.SendOption | string,
+    config?: Config.SendOption,
+) {
+    // return request(params);
+    if (typeof params === 'string') {
+        return request({
             method: 'GET',
-            data: data,
+            url: params,
+            ...config,
         });
-    }
-    static post(url: string, data?: any) {
-        return this.instance({
-            url: url,
-            method: 'POST',
-            data: data,
-        });
-    }
-    static head(url: string, data?: any) {
-        return this.instance({
-            url: url,
-            method: 'HEAD',
-            data: data,
-        });
-    }
-    static put(url: string, data?: any) {
-        return this.instance({
-            url: url,
-            method: 'PUT',
-            data: data,
-        });
+    } else {
+        return request(params);
     }
 }
 
-export default httpRequest;
+HttpRequest.prototype.create = create;
+
+['get', 'post', 'head', 'put'].forEach(method => {
+    HttpRequest.prototype[method] = (
+        url: string,
+        data: any,
+        config?: Config.SendOption,
+    ) => {
+        request({
+            url: url,
+            method: method.toUpperCase(),
+            data: data,
+        });
+    };
+});
+
+export default HttpRequest;
