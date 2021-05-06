@@ -15,6 +15,9 @@ export default function getDefaultAdapter() {
     ) {
         // For Node
         adapter = http;
+    } else {
+        throw Error('no adaptor for use ! check the environment');
     }
+
     return adapter;
 }

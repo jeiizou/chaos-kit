@@ -6,40 +6,20 @@ import settle from '../util/settle';
 
 /**
  *
- * @param config
  * @param params
  * @returns
  */
 export default function xhrAdapter(params: Default.SendOption) {
     return new Promise(function dispatchXhrRequest(resolve, reject) {
-        if (!window.XMLHttpRequest) {
-            reject(
-                'your browser is not sopport XMLHttpRequest ! please change browser and try again',
-            );
-            return;
-        }
-
         const {
             data = {},
-            headers = {},
             method = 'GET',
             responseType,
-            requestHeaders = {},
+            headers = {},
             url,
         } = params;
 
-        if (headers && utils.isFormData(data)) {
-            delete headers['Content-Type'];
-        }
-
         let request: XMLHttpRequest | null = new XMLHttpRequest();
-        if (params.auth) {
-            let username = params.auth.username || '';
-            let password = params.auth.password
-                ? unescape(encodeURIComponent(params.auth.password))
-                : '';
-            headers.Authorization = 'Basic ' + btoa(username + ':' + password);
-        }
 
         request.open(
             method.toUpperCase(),
@@ -48,7 +28,9 @@ export default function xhrAdapter(params: Default.SendOption) {
         );
 
         // 设置默认的请求超时时间
-        request.timeout = params.timeout || 0;
+        if (params.timeout) {
+            request.timeout = params.timeout;
+        }
 
         function onloadend() {
             if (!request) {
@@ -68,7 +50,7 @@ export default function xhrAdapter(params: Default.SendOption) {
                     ? request.responseText
                     : request.response;
             // 构建响应返回结构
-            const response = {
+            const response: Default.MyResponse = {
                 data: responseData,
                 status: request.status,
                 statusText: request.statusText,
@@ -126,21 +108,21 @@ export default function xhrAdapter(params: Default.SendOption) {
             if (params.timeoutErrorMessage) {
                 timeoutErrorMessage = params.timeoutErrorMessage;
             }
-            reject('ETIMEDOUT');
+            reject('ETIMEDOUT:' + timeoutErrorMessage);
             // Clean up request
             request = null;
         };
 
         if ('setRequestHeader' in request) {
             utils.forEach(
-                requestHeaders,
+                headers,
                 function setRequestHeader(val: string, key: string) {
                     if (
                         typeof data === 'undefined' &&
                         key.toLowerCase() === 'content-type'
                     ) {
                         // Remove Content-Type if data is undefined
-                        delete requestHeaders[key];
+                        delete headers[key];
                     } else {
                         // Otherwise add header to the request
                         request?.setRequestHeader(key, val);

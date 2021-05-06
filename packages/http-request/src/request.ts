@@ -2,6 +2,7 @@ import LRU from '@jeiizou/lru';
 import * as Default from './default';
 import * as util from '@jeiizou/tools';
 import * as Url from './util/url';
+import getDefaultAdapter from './util/getDefaultAdapter';
 
 export default class Request {
     lruCache:
@@ -79,14 +80,28 @@ export default class Request {
             ...mergedOption,
             url: fullPath,
             timeout:
-                mergedOption.timeout === undefined
+                mergedOption.timeout !== undefined
                     ? mergedOption.timeout
                     : this.requestContext.timeout,
         };
 
+        if (sendOption.headers && util.isFormData(sendOption.data)) {
+            delete sendOption.headers['Content-Type'];
+        }
+
+        if (sendOption.auth) {
+            let username = sendOption.auth.username || '';
+            let password = sendOption.auth.password
+                ? unescape(encodeURIComponent(sendOption.auth.password))
+                : '';
+        }
+
         try {
             if (this.requestContext.adapter) {
                 await this.requestContext.adapter(sendOption);
+            } else {
+                let adaptor = getDefaultAdapter();
+                await adaptor(sendOption);
             }
         } catch (error) {
             // TODO

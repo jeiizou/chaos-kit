@@ -32,16 +32,32 @@ function HttpRequest(
 
 HttpRequest.prototype.create = create;
 
-['get', 'post', 'head', 'put'].forEach(method => {
+// 没有data的方法
+['delete', 'get', 'head', 'potions'].forEach(method => {
+    HttpRequest.prototype[method] = (
+        url: string,
+        config?: Config.SendOption,
+    ) => {
+        return request({
+            url: url,
+            method: method.toUpperCase(),
+            data: (config || {}).data,
+        });
+    };
+});
+
+// 有data的方法
+['post', 'put', 'patch'].forEach(method => {
     HttpRequest.prototype[method] = (
         url: string,
         data: any,
-        config?: Config.SendOption,
+        config?: Partial<Config.SendOption>,
     ) => {
-        request({
+        return request({
+            method: method,
             url: url,
-            method: method.toUpperCase(),
             data: data,
+            ...(config || {}),
         });
     };
 });

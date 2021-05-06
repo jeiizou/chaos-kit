@@ -3,8 +3,7 @@ import * as Default from '../default';
 export default function settle(
     resolve: Function,
     reject: Function,
-    // TODO
-    response: any,
+    response: Default.MyResponse,
 ) {
     const validateStatus = response.config.validateStatus;
     if (

@@ -3,7 +3,7 @@ import getDefaultAdapter from './util/getDefaultAdapter';
 /**
  * 默认的请求头
  */
-export const defaultHeaders: KVStringObject = {
+export const defaultHeaders: HeaderObject = {
     Accept: 'application/json, text/plain, */*',
 };
 
@@ -22,16 +22,22 @@ export const defaultSendOption: SendOption = {
  * 请求的参数类型
  */
 export type SendOption = {
-    headers: HeaderObject;
-    method: string;
-    responseType: XMLHttpRequestResponseType;
-    requestHeaders?: HeaderObject;
-    data?: any;
+    // 请求地址
     url: string;
+    // 请求头信息
+    headers: HeaderObject;
+    // 请求数据
+    data?: any;
+    // 请求方法
+    method: string;
+    // 响应类型
+    responseType: XMLHttpRequestResponseType;
+    // 验证类型
     auth?: {
         username: string;
         password: string;
     };
+    // 参数的序列化方法
     paramsSerializer?: Function;
     timeout?: number;
     timeoutErrorMessage?: string;
@@ -67,6 +73,8 @@ export const defaultRequestContext = {
     },
     // 默认的请求方法
     adapter: getDefaultAdapter(),
+    // 默认的请求参数
+    default: defaultSendOption,
 };
 
 /**
@@ -75,4 +83,13 @@ export const defaultRequestContext = {
 export type RequestContext = typeof defaultRequestContext & {
     // 默认的参数配置函数
     paramsSerializer?: Function;
+};
+
+export type MyResponse = {
+    data: any;
+    status: number;
+    statusText: string;
+    headers: HeaderObject;
+    config: SendOption;
+    request: XMLHttpRequest;
 };
