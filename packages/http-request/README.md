@@ -10,7 +10,6 @@
 - [x] 请求缓存
 - [x] 请求拦截器
 - [x] fetch adapters 封装
-- [ ] http adapters 封装
 - [ ] 补充和完善单元测试
 
 ## UseAge
