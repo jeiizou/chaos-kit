@@ -1,9 +1,7 @@
-import * as Default from '../default';
-
 export default function settle(
     resolve: Function,
     reject: Function,
-    response: Default.MyResponse,
+    response: MyResponse,
 ) {
     const validateStatus = response.config.validateStatus;
     if (

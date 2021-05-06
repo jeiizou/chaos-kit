@@ -1,5 +1,5 @@
 import LRU from '@jeiizou/lru';
-import * as Default from './default';
+import defaultConfig from './default';
 import * as util from '@jeiizou/tools';
 import * as Url from './util/url';
 import getDefaultAdapter from './util/getDefaultAdapter';
@@ -15,17 +15,11 @@ export default class Request {
           >
         | undefined;
 
-    requestContext: Default.RequestContext;
+    requestContext: GlobalRequestContext;
 
-    requestTransformer: any[] = [];
-    responseTransformer: any[] = [];
-
-    constructor(config?: Partial<Default.RequestContext>) {
+    constructor(config?: Partial<GlobalRequestContext>) {
         // merge requestContext
-        this.requestContext = Object.assign(
-            Default.defaultRequestContext,
-            config,
-        );
+        this.requestContext = Object.assign(defaultConfig, config);
 
         // init LRU
         if (
@@ -41,8 +35,8 @@ export default class Request {
      * @param option
      * @returns
      */
-    async request(option: Partial<Default.SendOption>) {
-        let response;
+    async request(option: Partial<RequestParams>): Promise<MyResponse> {
+        let response: MyResponse;
         const { cacheTime } = this.requestContext;
         if (cacheTime && cacheTime > 0 && this.lruCache) {
             // 需要进行请求缓存逻辑
@@ -64,25 +58,21 @@ export default class Request {
             }
         } else {
             // 不需要进行缓存逻辑, 直接发送请求即可
-            return this.send(option);
+            return await this.send(option);
         }
     }
 
-    async send(option: Partial<Default.SendOption>) {
-        let mergedOption = Object.assign(Default.defaultSendOption, option);
+    async send(option: Partial<RequestParams>): Promise<MyResponse> {
+        let mergedOption = Object.assign(this.requestContext.default, option);
 
         let fullPath = Url.buildFullPath(
             this.requestContext.baseUrl || '',
             mergedOption.url || '',
         );
 
-        const sendOption = {
+        let sendOption = {
             ...mergedOption,
             url: fullPath,
-            timeout:
-                mergedOption.timeout !== undefined
-                    ? mergedOption.timeout
-                    : this.requestContext.timeout,
         };
 
         if (sendOption.headers && util.isFormData(sendOption.data)) {
@@ -94,17 +84,33 @@ export default class Request {
             let password = sendOption.auth.password
                 ? unescape(encodeURIComponent(sendOption.auth.password))
                 : '';
+            sendOption.headers.Authorization =
+                'Basic ' + btoa(username + ':' + password);
         }
-
         try {
+            // requestTransformer
+            let requestTransformer = this.requestContext.requestTransformer;
+            for await (const requestFunction of requestTransformer || []) {
+                sendOption = requestFunction(this.requestContext, sendOption);
+            }
+
+            // send request
+            let response: MyResponse;
             if (this.requestContext.adapter) {
-                await this.requestContext.adapter(sendOption);
+                response = await this.requestContext.adapter(sendOption);
             } else {
                 let adaptor = getDefaultAdapter();
-                await adaptor(sendOption);
+                response = await adaptor(sendOption);
             }
+
+            // requestTransformer
+            let responseTransformer = this.requestContext.responseTransformer;
+            for await (const requestFunction of responseTransformer || []) {
+                response = requestFunction(response);
+            }
+            return response;
         } catch (error) {
-            // TODO
+            return Promise.reject(error);
         }
     }
 }

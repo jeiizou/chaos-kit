@@ -1,9 +1,9 @@
 function enhanceError(
     error: Error,
     config: any,
-    code: number,
-    request: any,
-    response: any,
+    code?: number | string | null,
+    request?: any,
+    response?: any,
 ) {
     let enhancedError: any = error;
     enhancedError.config = config;
@@ -37,10 +37,12 @@ function enhanceError(
 function createError(
     message: string,
     config: any,
-    code: number,
-    request: any,
-    response: any,
+    code?: number | string | null,
+    request?: any,
+    response?: any,
 ) {
     let error = new Error(message);
     return enhanceError(error, config, code, request, response);
 }
+
+export default createError;

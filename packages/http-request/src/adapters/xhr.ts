@@ -1,15 +1,15 @@
-import * as Default from '../default';
 import * as Url from '../util/url';
 import * as utils from '@jeiizou/tools';
 import parseHeaders from '../util/parseHeader';
 import settle from '../util/settle';
+import createError from '../util/enhanceError';
 
 /**
  *
  * @param params
  * @returns
  */
-export default function xhrAdapter(params: Default.SendOption) {
+export default function xhrAdapter(params: RequestParams): Promise<MyResponse> {
     return new Promise(function dispatchXhrRequest(resolve, reject) {
         const {
             data = {},
@@ -23,7 +23,7 @@ export default function xhrAdapter(params: Default.SendOption) {
 
         request.open(
             method.toUpperCase(),
-            Url.buildURL(url, data, params.paramsSerializer),
+            Url.buildURL(url, data, params.paramsSerialier),
             true,
         );
 
@@ -50,7 +50,7 @@ export default function xhrAdapter(params: Default.SendOption) {
                     ? request.responseText
                     : request.response;
             // 构建响应返回结构
-            const response: Default.MyResponse = {
+            const response: MyResponse = {
                 data: responseData,
                 status: request.status,
                 statusText: request.statusText,
@@ -88,14 +88,16 @@ export default function xhrAdapter(params: Default.SendOption) {
             if (!request) {
                 return;
             }
-            reject('Request aborted');
+            reject(
+                createError('Request aborted', params, 'ECONNABORTED', request),
+            );
             request = null;
         };
 
         request.onerror = function handleError() {
             // Real errors are hidden from us by the browser
             // onerror should only fire if it's a network error
-            reject('Network Error');
+            reject(createError('Network Error', params, null, request));
 
             // Clean up request
             request = null;
@@ -108,8 +110,9 @@ export default function xhrAdapter(params: Default.SendOption) {
             if (params.timeoutErrorMessage) {
                 timeoutErrorMessage = params.timeoutErrorMessage;
             }
-            reject('ETIMEDOUT:' + timeoutErrorMessage);
-            // Clean up request
+            reject(
+                createError(timeoutErrorMessage, params, 'ETIMEDOUT', request),
+            );
             request = null;
         };
 
@@ -153,21 +156,21 @@ export default function xhrAdapter(params: Default.SendOption) {
             );
         }
 
-        if (params.cancelToken) {
-            // Handle cancellation
-            params.cancelToken.promise.then(function onCanceled(
-                cancel: string,
-            ) {
-                if (!request) {
-                    return;
-                }
+        // if (params.cancelToken) {
+        //     // Handle cancellation
+        //     params
+        //         .cancelToken()
+        //         .promise.then(function onCanceled(cancel: string) {
+        //             if (!request) {
+        //                 return;
+        //             }
 
-                request.abort();
-                reject(cancel);
-                // Clean up request
-                request = null;
-            });
-        }
+        //             request.abort();
+        //             reject(cancel);
+        //             // Clean up request
+        //             request = null;
+        //         });
+        // }
 
         if (!data) {
             request.send(null);
