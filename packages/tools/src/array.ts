@@ -25,3 +25,47 @@ export function forEach(obj: any, fn: Function) {
         }
     }
 }
+
+/**
+ * 数组压平
+ * @param deepLevel 压平的深度
+ */
+export function flap(array: any, deepLevel: number) {
+    if (!Array.isArray(array)) {
+        throw 'target is not a array';
+    }
+
+    function flatOnce(arr: any[]) {
+        let res: any[] = [];
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] instanceof Array) {
+                res = res.concat(arr[i]);
+            } else {
+                res.push(arr[i]);
+            }
+        }
+        return res;
+    }
+
+    function checkData(arr: any[]) {
+        for (let i = 0; i < arr.length; i++) {
+            const el = arr[i];
+            if (el instanceof Array) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    var i = 0;
+    var ret = array;
+    while (i < deepLevel) {
+        ret = flatOnce(ret);
+        i++;
+        if (checkData(ret)) {
+            return ret;
+        }
+    }
+
+    return ret;
+}

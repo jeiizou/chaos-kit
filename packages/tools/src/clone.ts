@@ -1,19 +1,5 @@
+import { forEach } from './array';
 import * as Type from './type';
-
-/**
- * 转换为while, 提高性能
- * @param array
- * @param iteratee
- * @returns
- */
-function forEach(array: any[], iteratee: any) {
-    let index = -1;
-    const length = array.length;
-    while (++index < length) {
-        iteratee(array[index], index);
-    }
-    return array;
-}
 
 /**
  * 创建新的对象
@@ -127,7 +113,7 @@ function cloneDeep(target: any, map = new WeakMap()) {
 
     // 克隆set
     if (Type.isSet(target)) {
-        target.forEach((value: any) => {
+        forEach(target, (value: any) => {
             cloneTarget.add(cloneDeep(value));
         });
         return cloneTarget;
@@ -135,7 +121,7 @@ function cloneDeep(target: any, map = new WeakMap()) {
 
     // 克隆map
     if (Type.isMap(target)) {
-        target.forEach((value: any, key: any) => {
+        forEach(target, (value: any, key: any) => {
             cloneTarget.set(key, cloneDeep(value));
         });
         return cloneTarget;
