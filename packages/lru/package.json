@@ -37,5 +37,6 @@
   },
   "dependencies": {
     "@chaos-kit/base": "^0.0.1"
-  }
+  },
+  "gitHead": "621c903f5a23c384056d929f7c497b8425f84515"
 }
