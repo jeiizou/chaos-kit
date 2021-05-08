@@ -1,13 +1,13 @@
 {
-  "name": "@jeiizou/tools",
-  "version": "0.0.0",
+  "name": "@chaos-kit/base",
+  "version": "0.0.1",
   "description": "> a base tool",
   "author": "jeiizou <jeiizou@qq.com>",
   "homepage": "",
   "license": "ISC",
-  "types": "lib/tools.d.ts",
-  "main": "lib/lru.js",
-  "module": "lib/tools.ems.js",
+  "types": "lib/base.d.ts",
+  "main": "lib/base.js",
+  "module": "lib/base.ems.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"

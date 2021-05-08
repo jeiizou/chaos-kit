@@ -1,5 +1,5 @@
 {
-  "name": "@jeiizou/root",
+  "name": "@chaos-kit/root",
   "private": true,
   "workspaces": [
     "packages/*"

@@ -1,11 +1,11 @@
 {
-  "name": "@jeiizou/lru",
-  "version": "0.0.0",
+  "name": "@chaos-kit/lru",
+  "version": "0.0.1",
   "description": "> a lite library for lru",
   "author": "jeiizou <jeiizou@qq.com>",
   "homepage": "",
   "license": "ISC",
-  "types": "lib/index.d.ts",
+  "types": "lib/lru.d.ts",
   "main": "lib/lru.js",
   "module": "lib/lru.ems.js",
   "directories": {
@@ -36,6 +36,6 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "@jeiizou/tools": "^0.0.0"
+    "@chaos-kit/base": "^0.0.1"
   }
 }
