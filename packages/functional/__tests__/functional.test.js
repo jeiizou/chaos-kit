@@ -1,0 +1,1 @@
+describe('@chaos-kit/functional', () => {});

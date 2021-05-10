@@ -1,0 +1,42 @@
+{
+  "name": "@chaos-kit/event-bus",
+  "version": "0.0.1",
+  "description": "> a lite library for lru",
+  "author": "jeiizou <jeiizou@qq.com>",
+  "homepage": "",
+  "license": "ISC",
+  "types": "lib/event-bus.d.ts",
+  "main": "lib/event-bus.js",
+  "module": "lib/event-bus.ems.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "registry": "http://registry.npmjs.org/"
+  },
+  "scripts": {
+    "dev": "rollup -c",
+    "build": "rollup -c",
+    "test": "jest",
+    "test-c": "jest --coverage"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.13.14",
+    "@babel/plugin-transform-runtime": "^7.13.10",
+    "@babel/preset-env": "^7.13.12",
+    "@babel/preset-typescript": "^7.13.0",
+    "@types/jest": "^26.0.22",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.5",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "@chaos-kit/base": "^0.0.1"
+  },
+  "gitHead": "621c903f5a23c384056d929f7c497b8425f84515"
+}
