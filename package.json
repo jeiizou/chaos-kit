@@ -6,7 +6,8 @@
   ],
   "scripts": {
     "dev": "lerna run dev --stream --parallel",
-    "build": "lerna run build --stream --parallel"
+    "build": "lerna run build --stream --parallel",
+    "new": "node ./srcipts/new.js"
   },
   "devDependencies": {
     "lerna": "^3.22.1"
