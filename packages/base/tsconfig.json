@@ -2,10 +2,9 @@
   "extends": "../../tsconfig.root.json",
   "exclude": [
     "node_modules",
-    // "**/*.spec.ts"
   ],
   "include": [
     "src/**/*.ts",
     "**/*.spec.ts"
-  ],
+  ]
 }
