@@ -52,10 +52,10 @@ export function createConfig(curPath, pkgInfo, initConfig = {}) {
                 babel({
                     exclude: 'node_modules/**', // 只编译我们的源代码
                     extensions,
-                    babelHelpers: 'bundled',
+                    babelHelpers: 'runtime',
                     presets: ['@babel/preset-env', '@babel/preset-typescript'],
                     plugins: [
-                        // '@babel/plugin-transform-runtime',
+                        '@babel/plugin-transform-runtime',
                         '@babel/plugin-proposal-class-properties',
                     ],
                 }),

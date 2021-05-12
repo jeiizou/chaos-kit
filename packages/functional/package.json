@@ -1,0 +1,35 @@
+{
+  "name": "@chaos-kit/functional",
+  "version": "0.0.3",
+  "description": "> a lite library for lru",
+  "author": "jeiizou <jeiizou@qq.com>",
+  "homepage": "",
+  "license": "ISC",
+  "types": "lib/lru.d.ts",
+  "main": "lib/lru.js",
+  "module": "lib/lru.ems.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "registry": "http://registry.npmjs.org/",
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "rollup -c",
+    "build": "rollup -c",
+    "test": "jest",
+    "test-c": "jest --coverage"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.22"
+  },
+  "dependencies": {
+    "@chaos-kit/base": "^0.0.3"
+  },
+  "gitHead": "055834a7cecaa21cb9ceb38a9c296de0ad0cfee7"
+}
