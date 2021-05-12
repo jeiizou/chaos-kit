@@ -1,6 +1,6 @@
 {
   "name": "@chaos-kit/lru",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "> a lite library for lru",
   "author": "jeiizou <jeiizou@qq.com>",
   "homepage": "",
@@ -28,7 +28,7 @@
     "@types/jest": "^26.0.22"
   },
   "dependencies": {
-    "@chaos-kit/base": "^0.0.1"
+    "@chaos-kit/base": "^0.0.2"
   },
   "gitHead": "621c903f5a23c384056d929f7c497b8425f84515"
 }
