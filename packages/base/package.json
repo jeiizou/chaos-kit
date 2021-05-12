@@ -16,7 +16,8 @@
     "lib"
   ],
   "publishConfig": {
-    "registry": "http://registry.npmjs.org/"
+    "registry": "http://registry.npmjs.org/",
+    "access": "public"
   },
   "scripts": {
     "dev": "rollup -c",
@@ -27,5 +28,6 @@
   "devDependencies": {
     "@types/jest": "^26.0.22",
     "ts-node": "^9.1.1"
-  }
+  },
+  "gitHead": "055834a7cecaa21cb9ceb38a9c296de0ad0cfee7"
 }

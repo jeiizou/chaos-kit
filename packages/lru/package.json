@@ -16,7 +16,8 @@
     "lib"
   ],
   "publishConfig": {
-    "registry": "http://registry.npmjs.org/"
+    "registry": "http://registry.npmjs.org/",
+    "access": "public"
   },
   "scripts": {
     "dev": "rollup -c",
@@ -30,5 +31,5 @@
   "dependencies": {
     "@chaos-kit/base": "^0.0.2"
   },
-  "gitHead": "621c903f5a23c384056d929f7c497b8425f84515"
+  "gitHead": "055834a7cecaa21cb9ceb38a9c296de0ad0cfee7"
 }
