@@ -1,8 +1,11 @@
 /**
  * @chaos-kit/base
- * @author jeiizou 
+ * @author jeiizou
  */
 export * from './type';
 export * from './array';
 export * from './match';
-export * from './async-pool';
+export * from './merge';
+export * from './clone';
+export * from './number';
+export * from './version';

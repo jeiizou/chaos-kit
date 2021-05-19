@@ -1,13 +1,13 @@
 {
-  "name": "@chaos-kit/{{name}}",
+  "name": "promise-pool",
   "version": "0.0.0",
-  "description": "> {{description}}",
+  "description": "> a limit class for parallel Promise",
   "author": "jeiizou <jeiizou@qq.com>",
   "homepage": "",
   "license": "ISC",
-  "types": "lib/{{name}}.d.ts",
-  "main": "lib/{{name}}.js",
-  "module": "lib/{{name}}.ems.js",
+  "types": "lib/promise-pool.d.ts",
+  "main": "lib/promise-pool.js",
+  "module": "lib/promise-pool.ems.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"

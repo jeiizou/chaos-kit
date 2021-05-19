@@ -1,4 +1,9 @@
-export class AsyncPool {
+/**
+ * promise-pool
+ * @description a limit class for parallel Promise
+ * @author jeiizou
+ */
+export default class PromisePool {
     pendingQueue: { fn: () => Promise<any>; resolve: (value: any) => void }[] =
         [];
     curExecQueue: Promise<any>[] = [];
